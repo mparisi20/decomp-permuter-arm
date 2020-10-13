@@ -6,7 +6,7 @@ import string
 import subprocess
 from typing import List, Tuple, Match
 
-OBJDUMP = ['arm-none-eabi-objdump', '-drz']
+OBJDUMP = ['powerpc-eabi-objdump', '-drz']
 
 # Ignore registers, for cleaner output. (We don't do this right now, but it can
 # be useful for debugging.)
@@ -32,8 +32,8 @@ branch_likely_instructions = [
     'swi', 'bkpt'
 ]
 branch_instructions = [
-    'b', 'beq', 'bne', 'bcs', 'bcc', 'bhs', 'blo', 'bmi', 'bpl', 'bvs', 'bvc', 'bhi', 'bls', 'bge', 'blt', 'bgt', 'ble',
-    'bl', 'bx', 'blx'
+    'b', 'beq', 'bne', 'blt', 'bgt', 'ble', 'bge', 'bl', 'blr', 'bdnz',
+    'beqlr', 'bnelr', 'bltlr', 'bgtlr' 'bgelr', 'blelr'
 ] + branch_likely_instructions
 
 def parse_relocated_line(line: str) -> Tuple[str, str, str]:
@@ -64,6 +64,7 @@ def simplify_objdump(input_lines: List[str]) -> List[str]:
         row = row.rstrip().split(';')[0].split('@')[0].split('//')[0]
         if '>:' in row or not row:
             continue
+        """
         if 'R_ARM_' in row:
             prev = output_lines[-1]
             if prev == '<skipped>':
@@ -88,6 +89,7 @@ def simplify_objdump(input_lines: List[str]) -> List[str]:
                 assert f"unknown relocation type '{row}'"
             output_lines[-1] = before + repl + after
             continue
+        """
         row = re.sub(comments, '', row)
         row = row.rstrip()
         row = '\t'.join(row.split('\t')[2:]) # [20:]
@@ -101,7 +103,7 @@ def simplify_objdump(input_lines: List[str]) -> List[str]:
         row_parts = row.split('\t')
         if len(row_parts) == 1:
             row_parts.append('')
-        print(row_parts)
+        #print(row_parts)
         mnemonic, instr_args = row_parts
         if mnemonic == 'addiu' and includes_sp.search(instr_args):
             row = re.sub(full_num_re, 'imm', row)

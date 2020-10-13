@@ -21,7 +21,7 @@ ASM_PRELUDE = """
     \label:
 .endm
 """
-DEFAULT_AS_CMDLINE = ["arm-none-eabi-as", "-march=armv4t", "-mthumb-interwork"]
+DEFAULT_AS_CMDLINE = ["powerpc-eabi-as", "mgekko", "-I", "include"]
 
 
 def formatcmd(cmdline):
