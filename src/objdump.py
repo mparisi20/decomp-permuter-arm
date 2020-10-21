@@ -6,7 +6,7 @@ import string
 import subprocess
 from typing import List, Tuple, Match
 
-OBJDUMP = ['powerpc-eabi-objdump', '-drz']
+OBJDUMP = ['powerpc-eabi-objdump', '-dz']
 
 # Ignore registers, for cleaner output. (We don't do this right now, but it can
 # be useful for debugging.)

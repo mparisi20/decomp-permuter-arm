@@ -212,9 +212,10 @@ def post_score(context: EvalContext, permuter: Permuter, result: EvalResult) -> 
             context.overall_profiler.add_stat(stattype, profiler.time_stats[stattype])
         timings = '\t' + context.overall_profiler.get_str_stats()
     status_line = f"iteration {context.iteration}, {context.errors} errors, score = {disp_score}{timings}"
-
+    
+    # only record better scores
     if (score_value is not None and score_hash is not None and
-            score_value <= permuter.base_score and score_hash not in permuter.hashes):
+            score_value < permuter.base_score and score_hash not in permuter.hashes):
         permuter.hashes.add(score_hash)
         permuter.best_score = min(permuter.best_score, score_value)
         print("\r" + " " * (len(status_line) + 10) + "\r", end='')
